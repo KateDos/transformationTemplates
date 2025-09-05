@@ -1,0 +1,81 @@
+{% if component.valueQuantity %}
+  "resultValue": { 
+  "type": { "text": "PQ" },
+  "text": "{{ component.valueQuantity.value }}"
+  },
+  "resultUnit":{
+	"codings": [
+	  {
+	    "system": "{{ component.valueQuantity.system }}",
+		"code": "{{ component.valueQuantity.code }}",
+		"display": "{{ component.valueQuantity.unit }}"
+	}
+    ],
+    "text": "{{ component.valueQuantity.unit }}"
+  },
+
+{% elsif component.valueString %}
+  "resultValue": { 
+  "type": { "text": "ST"  },
+  "text": "{{ component.valueString }}"
+ },
+
+{% elsif entry.valueCodeableConcept %}
+ 
+ "resultValue":{
+  "type":{ "text": "CE"},
+  "codings": [
+	{% for coding in component.valueCodeableConcept.coding %}
+	{
+	  {% include '_codableconcept' coding: coding -%}
+	}{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ],
+  "text": "{{ component.valueCodeableConcept.text  | default: component.valueCodeableConcept.coding[0].display }}"
+},
+
+{% elsif component.valueBoolean != nil %}
+"resultValue":{
+ "type":{"text": "ST" }, 
+ "text": "{{ component.valueBoolean }}"
+},
+
+{% elsif component.valueInteger %}
+"resultValue": { 
+ "type":{ "text": "NM" },
+ "text": "{{ component.valueInteger }}"
+},
+
+{% elsif component.valueRange %}
+"referenceRange":{
+ "type":{ "text": "NR" },
+  "text": "{{ component.valueRange.low.value }} {{ component.valueRange.low.unit }} - {{ component.valueRange.high.value }} {{ component.valueRange.high.unit }}",
+  "lowValue": "{{ component.valueRange.low.value }} {{ component.valueRange.low.unit }}",
+  "highValue": "{{ component.valueRange.high.value }} {{ component.valueRange.high.unit }}"
+},
+{% elsif component.valueRatio %}
+"resultValue":{
+ "type":{ "text": "SN" },
+  "text": "{{ component.valueRatio.numerator.value }} - {{ component.valueRatio.denominator.value }}",
+  "number": "{{ component.valueRatio.numerator.value }}",
+  "number2": "{{ component.valueRatio.denominator.value }}"
+},
+
+{% elsif component.valueTime %}
+"resultValue":{ 
+  "type":{ "text": "ST" },
+  "text": "{{ component.valueTime }}"
+},
+
+{% elsif component.valueDateTime %}
+"resultValue":{
+ "type":{ "text": "ST" },
+ "text": "{{ component.valueDateTime }}"
+},
+
+{% elsif component.valuePeriod %}
+"resultValue":{
+  "type":{ "text": "ST" },
+  "text": "{{ component.valuePeriod.start }} - {{ component.valuePeriod.end }}"
+},
+{% endif %}

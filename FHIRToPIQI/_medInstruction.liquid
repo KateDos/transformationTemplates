@@ -1,0 +1,7 @@
+{% if dosage.text %}
+  "instructions": "{{ dosage.text }}",
+{% else %}
+  {% if dosage.timing and dosage.timing.repeat %}
+    {% include '_medDosageInstruction' dosage: dosage -%}
+  {% endif %}
+{% endif %}

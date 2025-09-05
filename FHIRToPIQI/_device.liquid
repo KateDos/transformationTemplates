@@ -1,0 +1,37 @@
+"MedicalDevices": [
+  {% for device in devices %}
+    {
+      "deviceID": 
+      {% if device.udiCarrier[0].deviceIdentifier %}
+        "{{ device.udiCarrier[0].deviceIdentifier }}",
+	  {% elsif device.distinctIdentifier %}
+	     "{{ device.distinctIdentifier }}",
+      {% else %}
+        "{{ device.id }}",
+      {% endif %}
+	  {% assign valueDateTime =  device.extension | where: 'url', 'http://hl7.org/fhir/StructureDefinition/device-implantDate' | first.valueDateTime %}
+      "implantationDate": "{%if valueDateTime %}{{valueDateTime}}{% elseif device.manufactureDate %}{{ device.manufactureDate }}{% endif %}",
+      "deviceStatus": {
+        {% if device.status %}
+        "codings": [
+          {
+          },
+        ],
+        "text": "{{ device.status | capitalize }}"
+        {% endif %}
+      },
+      {% if device.type %}
+      "deviceType": {
+        "codings": [
+          {% for coding in device.type.coding %}
+          {
+		    {% include '_codableconcept' coding: coding -%}
+          },
+          {% endfor %}
+        ],
+        "text": "{{ device.type.text }}"
+      }
+      {% endif %}
+    },
+  {% endfor %}
+],

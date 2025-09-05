@@ -1,0 +1,66 @@
+"Goals": [
+  {% for goal in goals %}
+    {
+      "id": "{{ goal.id }}",
+	  "goal": {
+	  "codings": [
+	   {% for coding in goal.description.coding %}
+          {
+            {% include '_codableconcept' coding: coding -%}
+          },
+       {% endfor %}
+	],
+	"text": "{{ goal.description.text }}"
+	},
+	"effectiveDate": "{% if goal.statusDate %}{{ goal.statusDate }}{% elseif goal.startDate %}{{ goal.startDate }}{% elsif goal.startDateTime %}{{ goal.startDateTime }}{% endif %}",
+	"goalPriority": "{{ goal.priority.text | default: goal.priority.coding[0].display }}",
+      {% if goal.lifecycleStatus %}
+      "goalStatus": "{{ goal.lifecycleStatus }}",
+      {% endif %}
+      {% if goal.achievementStatus %}
+      "achievementStatus": {
+        "codings": [
+          {% for coding in goal.achievementStatus.coding %}
+          {
+            {% include '_codableconcept' coding: coding -%}
+          }{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        ],
+        "text": "{{ goal.achievementStatus.text }}"
+      },
+      {% endif %}
+      {% if goal.category %}
+      "goalCategory": [
+        {% for cat in goal.category %}
+        {
+          "codings": [
+            {% for coding in cat.coding %}
+            {
+              {% include '_codableconcept' coding: coding -%}
+            }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          "text": "{{ cat.text }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ],
+      {% endif %}
+      {% if goal.description %}
+      "description": "{{ goal.description.text }}",
+      {% endif %}
+      {% if goal.startDate %}
+      "startDate": "{{ goal.startDate }}",
+      {% endif %}
+      {% if goal.target %}
+      "target": [
+        {% for target in goal.target %}
+        {
+          {% if target.dueDate %}
+          "dueDate": "{{ target.dueDate }}"{% endif %}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+      {% endif %}
+    },
+  {% endfor %}
+],

@@ -1,0 +1,45 @@
+"ClinicalDocuments": [
+{% for doc in docs %}
+{
+  "id": "{{ doc.id }}",
+  "resourceType": "DocumentReference",
+  "effectiveDate": "{{ doc.date }}",
+  "hasAttachment": "{% if doc.content and doc.content.size > 0 %}true{% else %}false{% endif %}",
+  "documentStatus": {
+	"codings": [
+	],
+	"text": "{{ doc.status }}"
+  },
+  "documentTitle": "{{ docReference.description }}",
+  {% if doc.type %}
+  "documentType": {
+	"codings": [
+	  {% for coding in doc.type.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  },
+	  {% endfor %}
+	],
+	"text": "{{ doc.type.text }}"
+  },
+  {% endif %}
+
+  {% if doc.category %}
+  "category": [
+	{% for category in doc.category %}
+	{
+	  "codings": [
+		{% for coding in category.coding %}
+		{
+		  {% include '_codableconcept' coding: coding -%}
+		},
+		{% endfor %}
+	  ],
+	  "text": "{{ category.text }}"
+	}{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ],
+  {% endif %}
+},
+{% endfor %}
+],

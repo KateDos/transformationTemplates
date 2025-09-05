@@ -1,0 +1,110 @@
+"Demographics": {
+  "birthSex": {
+  {% assign birth_sex_ext = msg.extension | where: "url", "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex" | first %}
+  {% if birth_sex_ext == nil or birth_sex_ext == empty %}
+  "codings": [
+    {
+	  "system": "http://hl7.org/fhir/administrative-gender",
+      "code": "{{ msg.gender }}",
+	  "display": "{{ msg.gender }}"
+    }
+  ],
+  "text": "{{ msg.gender }}"
+  {% else %}
+  {% assign birth_sex_code = birth_sex_ext.valueCode %}
+  {% assign birth_sex_text = "" %}
+  {% if birth_sex_code == "M" %}
+    {% assign birth_sex_text = "Male" %}
+  {% elsif birth_sex_code == "F" %}
+	{% assign birth_sex_text = "Female" %}
+  {% elsif birth_sex_code == "UNK" %}
+	{% assign birth_sex_text = "Unknown" %}
+  {% else %}
+	{% assign birth_sex_text = "Other" %}
+  {% endif %}
+    "codings": [
+    {
+	  "system": "http://hl7.org/fhir/us/core/CodeSystem/birthsex",
+      "code": "{{ birth_sex_code }}",
+	  "display": "{{ birth_sex_text }}"
+    }
+    ],
+    "text": "{{ birth_sex_text }}"
+  {% endif %}
+  },
+	"birthDate": "{{ msg.birthDate }}",
+	{% if msg.deceasedDateTime %}
+    "deceased": "true",
+	{% endif %}
+	"deathDate": "{{ msg.deceasedDateTime }}",
+    "ethnicity": {
+      {% assign ethnicity_ext = msg.extension | where: "url", "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity" | first %}
+      {% if ethnicity_ext.extension %}
+        "codings": [
+          {% for subext in ethnicity_ext.extension %}
+            {% if subext.url == "ombCategory" %}
+              {
+                {% include '_valuecodableconcept' coding: subext -%}
+              },
+            {% endif %}
+          {% endfor %}
+        ],
+		{% assign text_ext = ethnicity_ext.extension | where: "url", "text" | first %}
+        "text": "{{ text_ext.valueString }}"
+      {% endif %}
+    },
+    "genderIdentity": {
+      {% assign gender_ext = msg.extension | where: "url", "http://hl7.org/fhir/StructureDefinition/patient-genderIdentity" | first %}
+      {% if gender_ext.valueCodeableConcept %}
+        "codings": [
+          {% for coding in gender_ext.valueCodeableConcept.coding %}
+            {
+              {% include '_valuecodableconcept' coding: coding -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ gender_ext.valueCodeableConcept.text }}"
+      {% endif %}
+    },
+    "maritalStatus": {
+      {% if msg.maritalStatus %}
+        "codings": [
+          {% for coding in msg.maritalStatus.coding %}
+            {
+			  {% include '_codableconcept' coding: coding -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ msg.maritalStatus.text }}"
+      {% endif %}
+    },
+    "primaryLanguage": {
+      {% assign lang_ext = msg.communication[0].language %}
+      {% if lang_ext %}
+        "codings": [
+          {% for coding in lang_ext.coding %}
+            {
+			  {% include '_codableconcept' coding: coding -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ lang_ext.text }}"
+      {% endif %}
+    },
+    "race": {
+      {% assign race_ext = msg.extension | where: "url", "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race" | first %}
+      {% if race_ext.extension %}
+        "codings": [
+          {% for subext in race_ext.extension %}
+            {% if subext.url == "ombCategory" %}
+              {
+			    {% include '_valuecodableconcept' coding: subext -%}
+              },
+            {% endif %}
+          {% endfor %}
+        ],
+		{% assign race_text = race_ext.extension | where: "url", "text" | first %}
+        "text": "{{ race_text.valueString }}"
+      {% endif %}
+    }
+},

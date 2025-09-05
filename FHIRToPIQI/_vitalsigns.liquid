@@ -1,0 +1,50 @@
+"VitalSigns":[
+{% for observation in observations %}
+{% if observation.category[0].coding[0].code == "vital-signs" -%}
+  {% if observation.component %}
+    {% for component in observation.component %}
+    {
+      "id": "{{ observation.id }}",
+      "vitalsign": {
+        "codings": [
+          {% for coding in component.code.coding %}
+          {
+            {% include '_codableconcept' coding: coding -%}
+          },
+          {% endfor %}
+        ],
+        "text": "{{ component.code.text }}"
+      },
+	  "interpretation": "{{ observation.interpretation[0].text }}",
+      "performedDateTime": "{{ observation.effectiveDateTime }}",
+	  "performingSite": "{{ observation.performer[0].display }}",
+      "resultStatus": "{{ observation.status }}",
+      {% include '_resultValue' component: component -%}
+	  
+	},
+    {% endfor %}
+  {% else %}
+  {
+   "id": "{{ observation.id }}",
+   "vitalsign": {
+    "codings": [
+      {% for coding in observation.code.coding %}
+      {
+        {% include '_codableconcept' coding: coding -%}
+      },
+      {% endfor %}
+    ],
+    "text": "{{ observation.code.text  | default: observation.code.coding[0].display }}"
+  },
+ 
+  "performedDateTime": "{{ observation.effectiveDateTime }}",
+  "performingSite": "{{ observation.performer[0].display }}",
+  "referenceRange": "{{ observation.referenceRange[0].text }}",
+  "interpretation": "{{ observation.interpretation[0].text }}",
+  "resultStatus": "{{ observation.status }}",
+   {% include '_resultValue' component: observation -%}
+   },
+  {% endif %}
+{% endif %}
+{% endfor %}
+],

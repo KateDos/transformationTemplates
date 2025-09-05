@@ -1,0 +1,91 @@
+{% assign labReports = reports | where: "category[0].coding[0].code", "LAB" %}
+
+"LabResults": [
+{% for entry in observations %}
+{% if entry.category[0].coding[0].code == "laboratory" -%}
+{% if entry.component %}
+{% for component in entry.component %}
+	{
+	  "id": "{{ entry.id }}",
+	  "order": {
+		"codings": [
+		  {% for coding in entry.code.coding %}
+			{
+			  {% include '_codableconcept' coding: coding -%}
+			}{% unless forloop.last %},{% endunless %}
+		  {% endfor %}
+		],
+		"text": "{{ entry.code.text | default: entry.code.coding[0].display }}"
+	  },
+	  "test": {
+		"codings": [
+		  {% for coding in component.code.coding %}
+			{
+			  {% include '_codableconcept' coding: coding -%}
+			}{% unless forloop.last %},{% endunless %}
+		  {% endfor %}
+		],
+		"text": "{{ component.code.text }}"
+	  },
+	  "interpretation": "{{ entry.interpretation[0].text }}",
+	  "performedDateTime": "{{ entry.effectiveDateTime }}",
+	  "performingSite": "{{ entry.performer[0].display }}",
+	  "resultStatus": "{{ entry.status }}",
+	  {% include '_resultValue' component: component %}
+	},
+{% endfor %}
+{% else %}
+{
+"id": "{{ entry.id }}",
+{% for report in reports %}
+{% if report.category[0].coding[0].code == "LAB" -%}
+{% for result in report.result %}
+{% assign obsRef1 = "Observation/" | append: entry.id %}
+{% assign obsRef2 = "urn:uuid:" | append: entry.id %}
+{% if result.reference == obsRef1 or result.reference == obsRef2 %}
+"order": {
+  "codings": [
+  {% for testCode in report.code.coding %}
+  {
+    {% include '_codableconcept' coding: testCode -%}
+  },
+  {% endfor %}
+  ],
+  "text": "{{ report.code.text | default: report.code.coding[0].display }}"
+},
+"orderDate": "{{ report.issued }}",
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+"test": {
+  "codings": [
+	{% for coding in entry.code.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  }{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ],
+  "text": "{{ entry.code.text | default: entry.code.coding[0].display }}"
+},
+"performedDateTime": "{{ entry.effectiveDateTime }}",
+"performingSite": "{{ entry.performer[0].display }}",
+"referenceRange": "{{ entry.referenceRange[0].text }}",
+"interpretation": "{{ entry.interpretation[0].text }}",
+"resultStatus": "{{ entry.status }}",
+{% include '_resultValue' component: entry %}
+"specimenType": {
+  "codings": [
+	{% for coding in entry.specimen.type.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  }{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ],
+  "text": "{{ entry.specimen.type.text }}"
+}
+}{% unless forloop.last %},{% endunless %}
+{% endif %}
+{% endif %}
+{% endfor %}
+],

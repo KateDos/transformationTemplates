@@ -1,0 +1,31 @@
+"Immunizations":[
+{% for immunization in immunizations %}
+{
+  "id": "{{ entry.id }}",
+  "administrationDate": "{{ immunization.occurrenceDateTime }}",
+  "expirationDate": "{{ immunization.expirationDate }}",
+  "lotNumber": "{{ immunization.lotNumber }}",
+  "reaction": {
+	"codings": [
+	  {% for reaction in immunization.reaction %}
+		{% if reaction.detail.display %}
+		{
+		  "display": "{{ reaction.detail.display }}"
+		}{% unless forloop.last %},{% endunless %}
+		{% endif %}
+	  {% endfor %}
+	]
+  },
+  "immunization": {
+	"codings": [
+	  {% for coding in immunization.vaccineCode.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  }{% unless forloop.last %},{% endunless %}
+	  {% endfor %}
+	],
+	"text": "{{ immunization.vaccineCode.text }}"
+  },
+},
+{% endfor %}
+],

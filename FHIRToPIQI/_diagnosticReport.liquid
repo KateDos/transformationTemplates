@@ -1,0 +1,57 @@
+"DiagnosticImaging":[
+  {% for report in reports %}
+    {
+      "id": "{{ report.id }}",
+      "procedure": {
+        "codings": [
+          {% for coding in report.code.coding %}
+          {
+		    {% include '_codableconcept' coding: coding -%}
+          },
+          {% endfor %}
+        ],
+        "text": "{{ report.code.text }}"
+      },
+	  "interpretation": "{{ report.conclusion }}",
+	  "hasAttachment": "{% if report.presentedForm and report.presentedForm.size > 0 %}true{% else %}false{% endif %}",
+	  "test": {
+        "codings": [
+          {% for coding in report.code.coding %}
+          {
+            {% include '_codableconcept' coding: coding -%}
+          },
+          {% endfor %}
+        ],
+        "text": "{{ report.code.text }}"
+      },
+	  "reportDateTime": "{{ report.effectiveDateTime }}",
+      {% if report.effectiveDateTime %}
+      "effectiveDate": "{{ report.effectiveDateTime }}",
+      {% elsif report.effectivePeriod.start %}
+      "effectiveDate": "{{ report.effectivePeriod.start }}",
+      {% endif %}
+      "issued": "{{ report.issued }}",
+      {% if report.result %}
+      "results": [
+        {% for obs in report.result %}
+        {
+          "reference": "{{ obs.reference }}"
+        },
+        {% endfor %}
+      ],
+      {% endif %}
+      {% if report.conclusionCode %}
+      "conclusions": [
+        {% for conclusion in report.conclusionCode %}
+        {
+		  {% include '_codableconcept' coding: conclusion -%}
+        },
+        {% endfor %}
+      ],
+      {% endif %}
+      {% if report.conclusion %}
+      "conclusionText": "{{ report.conclusion | strip_newlines | escape }}"
+      {% endif %}
+    },
+  {% endfor %}
+],

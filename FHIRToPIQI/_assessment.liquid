@@ -1,0 +1,22 @@
+"HealthAssessments":[
+{% for entry in observations %}
+{% if entry.category[0].coding[0].code != "laboratory" and entry.category[0].coding[0].code != "vital-signs" -%}
+{
+  "id": "{{ entry.id }}",
+  "assessment": {
+    "codings": [
+      {% for coding in entry.code.coding %}
+      {
+        {% include '_codableconcept' coding: coding -%}
+      },
+      {% endfor %}
+    ],
+    "text": "{{ entry.code.text | default: entry.code.coding[0].display }}"
+  },
+ 
+  "effectiveDate": "{{ entry.effectiveDateTime }}",
+  {% include '_resultValue' component: entry -%}
+},
+{% endif %}
+{% endfor %}
+],

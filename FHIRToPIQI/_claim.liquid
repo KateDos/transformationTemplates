@@ -1,0 +1,93 @@
+"Claims":[
+{% for claim in claims %}
+{
+  "id": "{{ claim.id }}",
+  "status": "{{ claim.status }}",
+  "use": "{{ claim.use }}",
+  "type": {
+	"codings": [
+	  {% for coding in claim.type.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  },
+	  {% endfor %}
+	],
+	"text": "{{ claim.type.text }}"
+  },
+  {% if claim.patient %}
+  "patient": {
+	"reference": "{{ claim.patient.reference }}",
+	"display": "{{ claim.patient.display }}"
+  },
+  {% endif %}
+  {% if claim.provider %}
+  "provider": {
+	"reference": "{{ claim.provider.reference }}",
+	"display": "{{ claim.provider.display }}"
+  },
+  {% endif %}
+  {% if claim.billablePeriod %}
+  "billablePeriod": {
+	"start": "{{ claim.billablePeriod.start }}",
+	"end": "{{ claim.billablePeriod.end }}"
+  },
+  {% endif %}
+  {% if claim.total %}
+  "total": {
+	"value": "{{ claim.total.value }}",
+	"currency": "{{ claim.total.currency }}"
+  },
+  {% endif %}
+  {% if claim.diagnosis %}
+  "diagnosis": [
+	{% for diag in claim.diagnosis %}
+	{
+	  "sequence": "{{ diag.sequence }}",
+	  "diagnosisCodeableConcept": {
+		"codings": [
+		  {% for coding in diag.diagnosisCodeableConcept.coding %}
+		  {
+		    {% include '_codableconcept' coding: coding -%}
+		  },
+		  {% endfor %}
+		],
+		"text": "{{ diag.diagnosisCodeableConcept.text }}"
+	  }
+	}{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ],
+  {% endif %}
+  {% if claim.item %}
+  "items": [
+	{% for item in claim.item %}
+	{
+	  "sequence": "{{ item.sequence }}",
+	  "productOrService": {
+		"codings": [
+		  {% for coding in item.productOrService.coding %}
+		  {
+		    {% include '_codableconcept' coding: coding -%}
+		  },
+		  {% endfor %}
+		],
+		"text": "{{ item.productOrService.text }}"
+	  },
+	  {% if item.unitPrice %}
+	  "unitPrice": {
+		"value": "{{ item.unitPrice.value }}",
+		"currency": "{{ item.unitPrice.currency }}"
+	  },
+	  {% endif %}
+	  {% if item.net %}
+	  "net": {
+		"value": "{{ item.net.value }}",
+		"currency": "{{ item.net.currency }}"
+	  }
+	  {% endif %}
+	}{% unless forloop.last %},{% endunless %}
+	{% endfor %}
+  ]
+  {% endif %}
+},
+{% endfor %}
+],

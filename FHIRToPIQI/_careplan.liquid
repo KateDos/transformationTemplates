@@ -1,0 +1,93 @@
+"CarePlans": [
+  {% for plan in careplans %}
+    {
+      "id": "{{ plan.id }}",
+      "resourceType": "CarePlan",
+      "status": "{{ plan.status }}",
+      "intent": "{{ plan.intent }}",
+      {% if plan.category %}
+      "categories": [
+        {% for cat in plan.category %}
+        {
+          "codings": [
+            {% for coding in cat.coding %}
+            {
+              {% include '_codableconcept' coding: coding -%}
+            },
+            {% endfor %}
+          ],
+          "text": "{{ cat.text }}"
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ],
+      {% endif %}
+      {% if plan.title %}
+      "title": "{{ plan.title }}",
+      {% endif %}
+      {% if plan.description %}
+      "description": "{{ plan.description }}",
+      {% endif %}
+      {% if plan.period %}
+      "period": {
+        "start": "{{ plan.period.start }}",
+        "end": "{{ plan.period.end }}"
+      },
+      {% endif %}
+      {% if plan.subject %}
+      "subject": {
+        "reference": "{{ plan.subject.reference }}",
+        "display": "{{ plan.subject.display }}"
+      },
+      {% endif %}
+      {% if plan.author %}
+      "author": {
+        "reference": "{{ plan.author.reference }}",
+        "display": "{{ plan.author.display }}"
+      },
+      {% endif %}
+      {% if plan.activity %}
+      "activities": [
+        {% for activity in plan.activity %}
+        {
+          {% if activity.detail %}
+          "detail": {
+            "status": "{{ activity.detail.status }}",
+            {% if activity.detail.category %}
+            "category": {
+              "codings": [
+                {% for coding in activity.detail.category.coding %}
+                {
+                  "{% include '_codableconcept' coding: coding -%}
+                },
+                {% endfor %}
+              ],
+              "text": "{{ activity.detail.category.text }}"
+            },
+            {% endif %}
+            {% if activity.detail.code %}
+            "code": {
+              "codings": [
+                {% for coding in activity.detail.code.coding %}
+                {
+                  {% include '_codableconcept' coding: coding -%}
+                },
+                {% endfor %}
+              ],
+              "text": "{{ activity.detail.code.text }}"
+            },
+            {% endif %}
+            {% if activity.detail.description %}
+            "description": "{{ activity.detail.description }}",
+            {% endif %}
+            {% if activity.detail.scheduledString %}
+            "scheduled": "{{ activity.detail.scheduledString }}"
+            {% endif %}
+          }
+          {% endif %}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+      {% endif %}
+    },
+  {% endfor %}
+],

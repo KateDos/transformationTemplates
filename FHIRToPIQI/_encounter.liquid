@@ -1,0 +1,66 @@
+"Encounters":[
+{% for encounter in encounters %}
+{
+  "id": "{{ entry.resource.id }}",
+  "encounterDateTime": "{{ encounter.period.start }}",
+  "encounterDisposition": "{% if encounter.hospitalization and encounter.hospitalization.dischargeDisposition and encounter.hospitalization.dischargeDisposition.text %}{{ encounter.hospitalization.dischargeDisposition.text }}{% endif %}",
+  "encounterIdentifier": "{% if encounter.identifier and encounter.identifier.size > 0 %}{{ encounter.identifier.first.value }}{% endif %}",
+  "encounterLocation": "{% if encounter.location and encounter.location.size > 0 %}{{ encounter.location.first.location.display }}{% endif %}",
+
+  {% if encounter.type and encounter.type.size > 0 %}
+    {% if encounter.type[0].text %}
+      "encounterType": "{{ encounter.type[0].text | strip }}",
+    {% elsif encounter.type[0].coding and encounter.type[0].coding.size > 0 and encounter.type[0].coding[0].display %}
+      "encounterType": "{{ encounter.type[0].coding[0].display | strip }}",
+    {% endif %}
+  {% endif %}
+
+  "status": "{{ encounter.status }}",
+
+  {% if encounter.class and encounter.class.display %}
+  "class": "{{ encounter.class.display }}",
+  {% endif %}
+
+  {% if encounter.period.start %}
+    "startDate": "{{ encounter.period.start }}",
+  {% endif %}
+
+  {% if encounter.period.end %}
+    "endDate": "{{ encounter.period.end }}",
+  {% endif %}
+
+  {% if encounter.diagnosis %}
+  "diagnosis": [
+  {% for diag in encounter.diagnosis %}
+    {
+      {% if diag.condition.display %}
+        "condition": "{{ diag.condition.display }}"
+      {% elsif diag.condition.reference %}
+        "condition": "{{ diag.condition.reference }}"
+      {% else %}
+        "condition": "Unknown"
+      {% endif %}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+  ],
+  {% endif %}
+
+  {% if encounter.reasonCode %}
+  "reason": [
+  {% for reason in encounter.reasonCode %}
+  {
+    "codings": [
+    {% for coding in reason.coding %}
+      {
+        {% include '_codableconcept' coding: coding -%}
+      },
+    {% endfor %}
+    ],
+    "text": "{{ doc.type.text }}"
+  },
+  {% endfor %}
+  ],
+  {% endif %}
+},
+{% endfor %}
+],

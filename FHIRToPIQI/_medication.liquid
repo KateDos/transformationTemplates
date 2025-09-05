@@ -1,0 +1,155 @@
+{
+    "id": "{{ med.id }}",
+	"type": "{{ type }}",
+
+    "medication": {
+	  {% if med.medicationReference %}
+	  {% for ref in refs %}
+		{% assign med1 = "Medication/" | append: ref.id %}
+		{% assign med2 = "urn:uuid:" | append: ref.id %}
+		{% if med.medicationReference.reference == med1 or med.medicationReference.reference == med2 %}
+		  "codings": [
+		  {% for refCode in ref.code.coding %}
+		  {
+			{% include '_codableconcept' coding: refCode -%}
+		  },
+		  {% endfor %}
+		  ],
+		  "text": "{{ ref.code.text | default: ref.code.coding[0].display }}",
+		{% endif %}
+	  {% endfor %}
+	  {% endif %}
+	  {% if med.medicationCodeableConcept.coding %}
+      "codings": [
+       
+          {% for code in med.medicationCodeableConcept.coding %}
+            {
+			  {% include '_codableconcept' coding: code -%}
+            },
+          {% endfor %}
+      ],
+      "text": "{{ med.medicationCodeableConcept.text }}"
+	  {% endif %}
+	  {% if med.code %}
+      "codings": [
+       
+          {% for code in med.code.coding %}
+            {
+			  {% include '_codableconcept' coding: code -%}
+            },
+          {% endfor %}
+      ],
+      "text": "{{ med.code.text }}"
+	  {% endif %}
+    },
+
+    "startDate": "{% if med.authoredOn %}{{ med.authoredOn }}{% elsif med.effectivePeriod.start %}{{ med.effectivePeriod.start }}{% endif %}",
+    "endDate": "{% if med.dispenseRequest.validityPeriod.end %}{{ med.dispenseRequest.validityPeriod.end }}{% elsif med.effectivePeriod.end %}{{ med.effectivePeriod.end }}{% endif %}",
+    {% if med.dosageInstruction.size >0 %}
+	  {% include '_medInstruction' dosage: med.dosageInstruction[0] -%}
+	{%endif %}
+	{% if med.dosageInstruction[0].doseAndRate[0].doseQuantity %}
+	"doseQuantity": "{% if med.dosageInstruction[0].doseAndRate[0].doseQuantity.value %}{{ med.dosageInstruction[0].doseAndRate[0].doseQuantity.value }}{% endif %}",
+    "doseQuantityUnit": {
+	  "codings": [
+	  {
+      {% assign unit = med.dosageInstruction[0].doseAndRate[0].doseQuantity %}
+      "system": "{{ unit.system }}",
+      "code": "{{ unit.code }}",
+      "unit": "{{ unit.unit }}"
+	  }
+	 ],
+	  "text": "{{ unit.unit }}"
+    },
+	{% else %}
+	"doseQuantity": "{% if med.dosageInstruction[0].doseQuantity.value %}{{ med.dosageInstruction[0].doseQuantity.value }}{% endif %}",
+    "doseQuantityUnit": {
+	  "codings": [
+	  {
+       {% assign dq = med.dosageInstruction[0].doseQuantity %}
+      "system": "{{ dq.system }}",
+      "code": "{{ dq.code }}",
+      "unit": "{{ dq.unit }}"
+	  }
+	 ],
+	  "text": "{{ dq.unit }}"
+    },
+	{% endif %}
+    {%if med.dosage.dose %}
+	"doseAmount": "{{ med.dosage.dose.value }}",
+	"doseAmountUnit": {
+	  "codings": [
+		{
+		  "system": "{{ med.dosage.dose.system | default: 'http://unitsofmeasure.org' }}",
+		  "code": "{{ med.dosage.dose.code | default: medicationAdministration.dosage.dose.unit }}",
+		  "display": "{{ med.dosage.dose.unit }}"
+		}
+	  ],
+	  "text": "{{ medicationAdministration.dosage.dose.unit }}"
+	},
+	{% endif %}
+
+	"doseRoute": {
+	{%if med.dosageInstruction[0].route %}
+      {% assign route = med.dosageInstruction[0].route %}
+      "codings": [
+        {% for r in route.coding %}
+          {
+            {% include '_codableconcept' coding: r -%}
+          },
+        {% endfor %}
+      ],
+      "text": "{{ route.text }}"
+	  {% else %}
+	   "codings": [
+       {% if med.dosage.route.coding %}
+       {% for coding in med.dosage.route.coding %}
+        {
+		   {% include '_codableconcept' coding: coding -%}
+        },
+      {% endfor %}
+      {% endif %}
+      ],
+      "text": "{{ med.dosage.route.text | default: med.dosage.route.coding[0].display | default: '' }}"
+	  {% endif %}
+    },
+	
+    "adherence": {
+      {% if med.adherence and med.adherence.code.coding %}
+        "codings": [
+          {% for c in med.adherence.code.coding %}
+            {
+			  {% include '_codableconcept' coding: c -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ med.adherence.code.text }}"
+      {% endif %}
+    },
+
+    "fillStatus": {
+      {% if med.statusReason.coding %}
+        "codings": [
+          {% for c in med.statusReason.coding %}
+            {
+			  {% include '_codableconcept' coding: c -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ med.statusReason.text }}"
+      {% endif %}
+    },
+
+    "indication": {
+      {% if med.reasonCode[0].coding %}
+        "codings": [
+          {% for c in med.reasonCode[0].coding %}
+            {
+			  {% include '_codableconcept' coding: c -%}
+            },
+          {% endfor %}
+        ],
+        "text": "{{ med.reasonCode[0].text }}"
+      {% endif %}
+    }
+},

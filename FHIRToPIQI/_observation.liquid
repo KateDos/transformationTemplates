@@ -1,0 +1,26 @@
+{% assign labResult = 0 %}
+{% assign vitalSigns = 0 %}
+{% assign healthAssess = 0 %}
+
+{% for entry in observations %}
+{% case  entry.category[0].coding[0].code -%}
+
+      {% when "laboratory" %}
+        {% if labResult == 0 %}
+          {% include '_labResult' msg: observations, reports: reports -%}
+          {% assign labResult = labResult | plus: 1 %}
+        {% endif %}
+
+      {% when "vital-signs" %}
+        {% if vitalSigns == 0 %}
+          {% include '_vitalsigns' msg: observations -%}
+          {% assign vitalSigns = vitalSigns | plus: 1 %}
+        {% endif %}
+
+      {% else %}
+	     {% if healthAssess == 0 %}
+          {% include '_assessment' msg: observations -%}
+          {% assign healthAssess = healthAssess | plus: 1 %}
+		 {% endif %}
+{% endcase %}
+{% endfor %}

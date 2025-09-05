@@ -1,0 +1,35 @@
+"Procedures":[
+{% for proc in procedures %}
+{
+    "id": "{{ proc.id }}",
+
+    "procedure": {
+      {% if proc.code.coding %}
+      "codings": [
+        {% for c in proc.code.coding %}
+        {
+		  {% include '_codableconcept' coding: c -%}
+        }{% if forloop.last == false %},{% endif %}
+        {% endfor %}
+      ],
+      {% endif %}
+      "text": "{{ proc.code.text }}"
+    },
+
+    "procedureDateTime": "{% if proc.performedDateTime %}{{ proc.performedDateTime }}{% elsif proc.performedPeriod.start %}{{ proc.performedPeriod.start }}{% endif %}",
+
+    "procedureReason": {
+      {% if proc.reasonCode[0].coding %}
+      "codings": [
+        {% for r in proc.reasonCode[0].coding %}
+        {
+          {% include '_codableconcept' coding: r -%}
+        }{% if forloop.last == false %},{% endif %}
+        {% endfor %}
+      ],
+      {% endif %}
+      "text": "{{ proc.reasonCode[0].text }}"
+    }
+},
+{% endfor %}
+],

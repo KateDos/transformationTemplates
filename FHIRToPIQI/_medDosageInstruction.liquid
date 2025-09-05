@@ -1,0 +1,32 @@
+{% assign freq = dosage.timing.repeat.frequency %}
+{% assign per = dosage.timing.repeat.period %}
+{% assign perUnit = dosage.timing.repeat.periodUnit %}
+{% assign timingText = "" %}
+
+{% if freq and per and perUnit %}
+  {% assign timingText = "Take " | append: freq | append: " time" %}
+  {% if freq != 1 %}
+    {% assign timingText = timingText | append: "s" %}
+  {% endif %}
+  {% assign timingText = timingText | append: " every " | append: per | append: " " | append: perUnit %}
+  {% if per != 1 %}
+    {% assign timingText = timingText | append: "s" %}
+  {% endif %}
+{% elsif freq and perUnit %}
+  {% assign timingText = "Take " | append: freq | append: " time" %}
+  {% if freq != 1 %}
+    {% assign timingText = timingText | append: "s" %}
+  {% endif %}
+  {% assign timingText = timingText | append: " per " | append: perUnit %}
+{% elsif dosage.timing.code %}
+  {% assign timingText = dosage.timing.code.text | default: dosage.timing.code.coding[0].display %}
+{% endif %}
+
+{%- if dosage.asNeeded == true or dosage.asNeeded == 'true' or dosage.asNeededBoolean == true or dosage.asNeededBoolean == 'true' -%}
+  {% assign timingText = timingText | append: " as needed" %}
+{% elsif dosage.asNeededCodeableConcept %}
+  {% assign reasonText = dosage.asNeededCodeableConcept.text | default: dosage.asNeededCodeableConcept.coding[0].display %}
+  {% assign timingText = timingText | append: " as needed for " | append: reasonText %}
+{% endif %}
+
+"instructions": "{{ timingText }}",

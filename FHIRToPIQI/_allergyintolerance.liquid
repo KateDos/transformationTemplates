@@ -1,0 +1,64 @@
+"Allergies":[
+{% for allergy in allergies %}
+{% assign allergyId = allergy.id %}
+{% assign allergyCategory = allergy.category[0] %}
+{% assign allergyEffectiveDate = allergy.recordedDate | default: allergy.onsetDateTime %}
+{% if allergy.reaction %}
+{% for reaction in allergy.reaction %}
+{% assign reactionCode = reaction.manifestation[0] %}
+{% assign reactionSeverity = reaction.severity %}
+{
+  "id": "{{ allergyId }}",
+  "category": {
+	"text": "{{ allergyCategory }}"
+  },
+  "effectiveDate": "{{ allergyEffectiveDate }}",
+  "reaction": {
+	"codings": [
+	  {% for coding in reactionCode.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  },
+	  {% endfor %}
+	],
+	"text": "{{ reactionCode.text }}"
+  },
+  "severity": {
+	"text": "{{ reactionSeverity }}"
+  },
+  "substance": {
+	"codings": [
+	  {% for coding in allergy.code.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  },
+	  {% endfor %}
+	],
+	"text": "{{ allergy.code.text }}"
+  }
+},
+{% endfor %}
+{% else %}
+{
+  "id": "{{ allergyId }}",
+  "category": {
+	"text": "{{ allergyCategory }}"
+  },
+  "effectiveDate": "{{ allergyEffectiveDate }}",
+  "severity": {
+	"text": "{{ allergy.criticality }}"
+  },
+  "substance": {
+	"codings": [
+	  {% for coding in allergy.code.coding %}
+	  {
+		{% include '_codableconcept' coding: coding -%}
+	  },
+	  {% endfor %}
+	],
+	"text": "{{ allergy.code.text }}"
+  }
+},
+{% endif %}
+{% endfor %}
+],
