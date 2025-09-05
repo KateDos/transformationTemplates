@@ -1,8 +1,6 @@
 "ClinicalDocuments": [
 {% for doc in docs %}
 {
-  "id": "{{ doc.id }}",
-  "resourceType": "DocumentReference",
   "effectiveDate": "{{ doc.date }}",
   "hasAttachment": "{% if doc.content and doc.content.size > 0 %}true{% else %}false{% endif %}",
   "documentStatus": {

@@ -36,24 +36,6 @@
 {% assign medDispenseRefsString = medDispenseRefs | join: ", " | append: "," %}
 
 "MessageId": "{{ patient.id }}",
-"ResourceCount": "{{ resources.size }}",
-"AllergyCount": "{{ allergies.size }}",
-"CarePlanCount": "{{ carePlans.size }}",
-"ClaimsCount": "{{ claims.size }}",
-"ConditionCount": "{{ conditions.size }}",
-"DeviceCount": "{{ devices.size }}",
-"DiagnosticReportCount": "{{ reports.size }}",
-"DocumentReferenceCount": "{{ docs.size }}",
-"EncounterCount": "{{ encounters.size }}",
-"GoalCount": "{{ goals.size }}",
-"ImmunizationCount": "{{ immunizations.size }}",
-"MedicationRequestCount": "{{ medRequests.size }}",
-"MedicationStatementCount": "{{ medStatements.size }}",
-"MedicationCount": "{{ medications.size }}",
-"MedicationAdministrationCount": "{{ medAdmin.size }}",
-"MedicationDispenseCount": "{{ medDispense.size }}",
-"ObservationCount": "{{ observations.size }}",
-"ProcedureCount": "{{ procedures.size }}",
 "Patient": {
   {% include '_patient' msg: patient -%}
 

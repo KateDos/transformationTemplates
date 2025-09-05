@@ -4,7 +4,6 @@
   {% if observation.component %}
     {% for component in observation.component %}
     {
-      "id": "{{ observation.id }}",
       "vitalsign": {
         "codings": [
           {% for coding in component.code.coding %}
@@ -25,7 +24,6 @@
     {% endfor %}
   {% else %}
   {
-   "id": "{{ observation.id }}",
    "vitalsign": {
     "codings": [
       {% for coding in observation.code.coding %}

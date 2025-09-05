@@ -1,7 +1,6 @@
 "Encounters":[
 {% for encounter in encounters %}
 {
-  "id": "{{ entry.resource.id }}",
   "encounterDateTime": "{{ encounter.period.start }}",
   "encounterDisposition": "{% if encounter.hospitalization and encounter.hospitalization.dischargeDisposition and encounter.hospitalization.dischargeDisposition.text %}{{ encounter.hospitalization.dischargeDisposition.text }}{% endif %}",
   "encounterIdentifier": "{% if encounter.identifier and encounter.identifier.size > 0 %}{{ encounter.identifier.first.value }}{% endif %}",

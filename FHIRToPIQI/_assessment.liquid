@@ -2,7 +2,6 @@
 {% for entry in observations %}
 {% if entry.category[0].coding[0].code != "laboratory" and entry.category[0].coding[0].code != "vital-signs" -%}
 {
-  "id": "{{ entry.id }}",
   "assessment": {
     "codings": [
       {% for coding in entry.code.coding %}

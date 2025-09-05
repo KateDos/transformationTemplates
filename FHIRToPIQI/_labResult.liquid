@@ -6,7 +6,6 @@
 {% if entry.component %}
 {% for component in entry.component %}
 	{
-	  "id": "{{ entry.id }}",
 	  "order": {
 		"codings": [
 		  {% for coding in entry.code.coding %}
@@ -36,7 +35,6 @@
 {% endfor %}
 {% else %}
 {
-"id": "{{ entry.id }}",
 {% for report in reports %}
 {% if report.category[0].coding[0].code == "LAB" -%}
 {% for result in report.result %}

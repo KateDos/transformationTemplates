@@ -1,8 +1,6 @@
 "Procedures":[
 {% for proc in procedures %}
 {
-    "id": "{{ proc.id }}",
-
     "procedure": {
       {% if proc.code.coding %}
       "codings": [

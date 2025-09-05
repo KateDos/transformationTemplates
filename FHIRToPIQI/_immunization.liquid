@@ -1,7 +1,6 @@
 "Immunizations":[
 {% for immunization in immunizations %}
 {
-  "id": "{{ entry.id }}",
   "administrationDate": "{{ immunization.occurrenceDateTime }}",
   "expirationDate": "{{ immunization.expirationDate }}",
   "lotNumber": "{{ immunization.lotNumber }}",
@@ -10,7 +9,7 @@
 	  {% for reaction in immunization.reaction %}
 		{% if reaction.detail.display %}
 		{
-		  "display": "{{ reaction.detail.display }}"
+		  "display": "{{ reaction.detail.display | strip }}"
 		}{% unless forloop.last %},{% endunless %}
 		{% endif %}
 	  {% endfor %}
@@ -24,7 +23,7 @@
 	  }{% unless forloop.last %},{% endunless %}
 	  {% endfor %}
 	],
-	"text": "{{ immunization.vaccineCode.text }}"
+	"text": "{{ immunization.vaccineCode.text | strip }}"
   },
 },
 {% endfor %}

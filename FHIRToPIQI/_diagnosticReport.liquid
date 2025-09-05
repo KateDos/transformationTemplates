@@ -1,7 +1,6 @@
 "DiagnosticImaging":[
   {% for report in reports %}
     {
-      "id": "{{ report.id }}",
       "procedure": {
         "codings": [
           {% for coding in report.code.coding %}

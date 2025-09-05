@@ -1,7 +1,6 @@
 "Conditions":[
 {% for entry in conditions %}
 {
-  "id": "{{ entry.id }}",
   "conditionType":"{{ entry.category[0].coding[0].display | default: 'Problem' }}",
   "conditionStatus": {
   {% if entry.clinicalStatus and entry.clinicalStatus.coding %}

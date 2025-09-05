@@ -1,8 +1,6 @@
 "CarePlans": [
   {% for plan in careplans %}
     {
-      "id": "{{ plan.id }}",
-      "resourceType": "CarePlan",
       "status": "{{ plan.status }}",
       "intent": "{{ plan.intent }}",
       {% if plan.category %}

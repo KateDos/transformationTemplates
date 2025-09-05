@@ -8,7 +8,6 @@
 {% assign reactionCode = reaction.manifestation[0] %}
 {% assign reactionSeverity = reaction.severity %}
 {
-  "id": "{{ allergyId }}",
   "category": {
 	"text": "{{ allergyCategory }}"
   },
@@ -40,7 +39,6 @@
 {% endfor %}
 {% else %}
 {
-  "id": "{{ allergyId }}",
   "category": {
 	"text": "{{ allergyCategory }}"
   },
