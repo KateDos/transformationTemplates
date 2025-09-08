@@ -65,7 +65,7 @@ The Microsoft FHIR Converter project has a specific structure to support custom 
 
 2. **Creating a New Template Directory**
    Copy the provided `FHIRToPIQI` folder to `data/Templates/`.
-    ```bash
+    ```
      data/Templates/
     ├── Json/
     │   └── metadata.json
@@ -73,7 +73,7 @@ The Microsoft FHIR Converter project has a specific structure to support custom 
     ├── _patient.liquid
     ├── _observation.liquid
     └── ...
-    ```bash
+    ```
 
 
 3. **Define the Schema and Liquid Mapping Rules**
