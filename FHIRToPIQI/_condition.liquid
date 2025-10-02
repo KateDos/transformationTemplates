@@ -1,4 +1,4 @@
-"Conditions":[
+"conditions":[
 {% for entry in conditions %}
 {
   "conditionType":"{{ entry.category[0].coding[0].display | default: 'Problem' }}",

@@ -17,6 +17,7 @@
 {% assign medAdmin = resources | where: "resourceType", "MedicationAdministration" %}
 {% assign medDispense = resources | where: "resourceType", "MedicationDispense" %}
 {% assign observations = resources | where: "resourceType", "Observation" %}
+{% assign specimens = resources | where: "resourceType", "Specimen" %}
 {% assign procedures = resources | where: "resourceType", "Procedure" %}
 
 {% assign medReqRef1 = medRequests | map: "medicationReference" %}
@@ -35,8 +36,8 @@
 {% assign medDispenseRefs = medDispenseRefs1 | map: "reference" %}
 {% assign medDispenseRefsString = medDispenseRefs | join: ", " | append: "," %}
 
-"MessageId": "{{ patient.id }}",
-"Patient": {
+"messageID": "{{ patient.id }}",
+"patient": {
   {% include '_patient' msg: patient -%}
 
   {% if allergies.size > 0 %}
@@ -56,7 +57,7 @@
   {% endif %}
 
   {% if medRequests.size > 0 or medStatements.size > 0 or medications.size >0 or medAdmin.size >0 or medDispense.size >0 %}
-  "Medications":[
+  "medications":[
 	{% if medRequests.size > 0 %}
 	{% for med in medRequests %}
 	  {% include '_medication' med: med, type: "MedicationRequest", refs: medications -%}
@@ -110,7 +111,7 @@
   {% endif %}
 
   {% if observations.size > 0 %}
-	{% include '_observation' observations: observations, reports: reports -%}
+	{% include '_observation' observations: observations, reports: reports, specimens: specimens -%}
   {% endif %}
 
  {% if procedures.size > 0 %}
@@ -126,7 +127,7 @@
   {% endif %}
 
   {% if encounters.size > 0 %}
-	{% include '_encounter' encounters: encounters -%}
+	{% include '_encounter' encounters: encounters, conditions: conditions -%}
   {% endif %}
 
   {% if goals.size > 0 %}

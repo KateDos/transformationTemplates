@@ -1,0 +1,53 @@
+{% assign specFound = false %}
+ 
+    {% for specimen in specimens %}
+      {% assign specID = specimen.id %}
+
+      {% assign specRef1 = "Specimen/" | append: specId %}
+      {% assign specRef2 = "urn:uuid:" | append: spedId %}
+
+	  {% if specimenReference == specRef1 or specimenReference == specRef2 %}
+        {% if specFound == false %}
+
+		  {% if specimen.type %}
+			"specimenType": {
+			  "codings": [
+				{% for coding in specimen.type.coding %}
+				  {
+					{% include '_codableconcept' coding: coding -%}
+				  }{% unless forloop.last %},{% endunless %}
+				{% endfor %}
+			  ],
+			  "text": "{{ specimen.type.text }}"
+			},
+		  {% endif %}
+
+		  {% if specimen.id %}
+			"specimenIdentifier": "{{ specID }}",
+		  {% endif %}
+
+		  {% if specimen.status %}
+			"specimenStatus": "{{ specimen.status }}",
+		  {% endif %}
+
+		  {% if specimen.receivedTime %}
+			"specimenReceivedTime": "{{ specimen.receivedTime }}",
+		  {% endif %}
+
+		  {% if specimen.condition %}
+			"specimenCondition": {
+			  "codings": [
+				{% for coding in specimen.condition.coding %}
+				  {
+					{% include '_codableconcept' coding: coding -%}
+				  },
+				{% endfor %}
+			  ],
+			  "text": "{{ specimen.condition.text |  default: specimen.condition.coding[0].display }}"
+			},
+		  {% endif %}
+
+          {% assign specFound = true %}
+        {% endif %}
+      {% endif %}
+  {% endfor %}

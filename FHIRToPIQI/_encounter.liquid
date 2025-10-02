@@ -1,5 +1,8 @@
-"Encounters":[
+"encounters":[
 {% for encounter in encounters %}
+{% assign encounterId = encounter.id %}
+{% assign encounterRef1 = "Encounter/" | append: encounterId %}
+{% assign encounterRef2 = "urn:uuid:" | append: encounterId %}
 {
   "encounterDateTime": "{{ encounter.period.start }}",
   "encounterDisposition": "{% if encounter.hospitalization and encounter.hospitalization.dischargeDisposition and encounter.hospitalization.dischargeDisposition.text %}{{ encounter.hospitalization.dischargeDisposition.text }}{% endif %}",
@@ -29,36 +32,52 @@
   {% endif %}
 
   {% if encounter.diagnosis %}
-  "diagnosis": [
-  {% for diag in encounter.diagnosis %}
+  "encounterDiagnosis": {
+    "codings": [
+    {% assign diag = encounter.diagnosis[0] %}
+    {% for coding in diag.use.coding %}
     {
-      {% if diag.condition.display %}
-        "condition": "{{ diag.condition.display }}"
-      {% elsif diag.condition.reference %}
-        "condition": "{{ diag.condition.reference }}"
-      {% else %}
-        "condition": "Unknown"
-      {% endif %}
-    }{% unless forloop.last %},{% endunless %}
+       {% include '_codableconcept' coding: coding -%}
+    },
+    {% endfor %}
+    ],
+    "text": "{{ diag.use.text | default: diag.use.coding[0].display }}"
+  },
+  {% else %}
+  {% assign condFound = false %}
+ 
+  {% for cond in conditions %}
+  {% if cond.encounter.reference == encounterRef1 or cond.encounter.reference == encounterRef2 %}
+  {% if condFound == false and cond.category and cond.category[0].coding and cond.category[0].coding[0].code == "encounter-diagnosis" %}
+        "encounterDiagnosis": {
+          "codings": [
+            {% for coding in cond.code.coding %}
+            {
+               {% include '_codableconcept' coding: coding -%}
+            },
+            {% endfor %}
+          ],
+          "text": "{{ cond.code.text | default: cond.code.coding[0].display }}"
+        },
+        {% assign condFound = true %}
+  {% endif %}
+  {% endif %}
   {% endfor %}
-  ],
   {% endif %}
 
   {% if encounter.reasonCode %}
-  "reason": [
-  {% for reason in encounter.reasonCode %}
-  {
+   "encounterReason": {
     "codings": [
-    {% for coding in reason.coding %}
-      {
-        {% include '_codableconcept' coding: coding -%}
-      },
-    {% endfor %}
+      {% for rc in encounter.reasonCode %}
+        {% for coding in rc.coding %}
+        {
+           {% include '_codableconcept' coding: coding -%}
+        },
+        {% endfor %}
+      {% endfor %}
     ],
-    "text": "{{ doc.type.text }}"
+    "text": "{{ encounter.reasonCode[0].text | default: encounter.reasonCode[0].coding[0].display }}"
   },
-  {% endfor %}
-  ],
   {% endif %}
 },
 {% endfor %}

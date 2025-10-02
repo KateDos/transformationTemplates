@@ -7,7 +7,7 @@
 
       {% when "laboratory" %}
         {% if labResult == 0 %}
-          {% include '_labResult' msg: observations, reports: reports -%}
+          {% include '_labResult' msg: observations, reports: reports, specimens: specimens -%}
           {% assign labResult = labResult | plus: 1 %}
         {% endif %}
 

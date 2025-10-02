@@ -1,4 +1,4 @@
-"DiagnosticImaging":[
+"diagnosticImaging":[
   {% for report in reports %}
     {
       "procedure": {
@@ -30,15 +30,6 @@
       "effectiveDate": "{{ report.effectivePeriod.start }}",
       {% endif %}
       "issued": "{{ report.issued }}",
-      {% if report.result %}
-      "results": [
-        {% for obs in report.result %}
-        {
-          "reference": "{{ obs.reference }}"
-        },
-        {% endfor %}
-      ],
-      {% endif %}
       {% if report.conclusionCode %}
       "conclusions": [
         {% for conclusion in report.conclusionCode %}

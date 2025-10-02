@@ -1,4 +1,4 @@
-"HealthAssessments":[
+"healthAssessments":[
 {% for entry in observations %}
 {% if entry.category[0].coding[0].code != "laboratory" and entry.category[0].coding[0].code != "vital-signs" -%}
 {
@@ -16,6 +16,25 @@
   "effectiveDate": "{{ entry.effectiveDateTime }}",
   {% include '_resultValue' component: entry -%}
 },
+{% if entry.component %}
+{% for component in entry.component %}
+  {
+    "assessment": {
+      "codings": [
+        {% for coding in component.code.coding %}
+        {
+          {% include '_codableconcept' coding: coding -%}
+        },
+        {% endfor %}
+      ],
+      "text": "{{ component.code.text }}"
+    },
+	"effectiveDate": "{{ entry.effectiveDateTime }}",
+	{% include '_resultValue' component: component -%}
+  },
+{% endfor %}
+{% endif %}
+
 {% endif %}
 {% endfor %}
 ],
