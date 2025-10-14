@@ -25,6 +25,16 @@
 	],
 	"text": "{{ immunization.vaccineCode.text | strip }}"
   },
+  "immunizationStatus": {
+  "codings": [
+    {
+      "system": "http://hl7.org/fhir/event-status",
+      "code": "{{ immunization.status }}",
+      "display": "{{ immunization.status }}"      
+    }
+  ],
+  "text": "{{ immunization.status }}"
+},
 },
 {% endfor %}
 ],

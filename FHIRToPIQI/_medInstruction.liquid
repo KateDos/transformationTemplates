@@ -1,5 +1,8 @@
 {% if dosage.text %}
-  "instructions": "{{ dosage.text }}",
+
+  {% assign d = dosage.text | strip | replace: '\r\n', ' ' | replace: '\r', ' ' | replace: '\n', ' ' %}
+  "instructions": "{{ d }}",
+
 {% else %}
   {% if dosage.timing and dosage.timing.repeat %}
     {% include '_medDosageInstruction' dosage: dosage -%}

@@ -148,5 +148,20 @@
         ],
         "text": "{{ med.reasonCode[0].text }}"
       {% endif %}
-    }
+    },
+
+    {% assign medDate = '' %}
+
+{% if med.dateAsserted %}
+  {% assign medDate = med.dateAsserted %}
+{% elseif med.effectiveDateTime %}
+  {% assign medDate = med.effectiveDateTime %}
+{% elsif med.effectivePeriod %}
+  {% if med.effectivePeriod.start %}
+    {% assign medDate = med.effectivePeriod.start %}
+  {% endif %}
+{% elsif med.authoredOn %}
+  {% assign medDate = med.authoredOn %}
+{% endif %}
+"statementDate": "{{ medDate }}",
 },

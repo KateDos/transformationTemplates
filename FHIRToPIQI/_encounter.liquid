@@ -17,18 +17,18 @@
     {% endif %}
   {% endif %}
 
-  "status": "{{ encounter.status }}",
+  "encounterStatus": "{{ encounter.status }}",
 
   {% if encounter.class and encounter.class.display %}
   "class": "{{ encounter.class.display }}",
   {% endif %}
 
   {% if encounter.period.start %}
-    "startDate": "{{ encounter.period.start }}",
+    "encounterStartDatetime": "{{ encounter.period.start }}",
   {% endif %}
 
   {% if encounter.period.end %}
-    "endDate": "{{ encounter.period.end }}",
+    "encounterEndDatetime": "{{ encounter.period.end }}",
   {% endif %}
 
   {% if encounter.diagnosis %}

@@ -20,21 +20,42 @@
 {% assign specimens = resources | where: "resourceType", "Specimen" %}
 {% assign procedures = resources | where: "resourceType", "Procedure" %}
 
-{% assign medReqRef1 = medRequests | map: "medicationReference" %}
-{% assign medReqRefs = medReqRef1 | map: "reference" %}
-{% assign medReqRefsString = medReqRefs | join: ", " | append: "," %}
 
-{% assign medStatRefs1 = medStatements | map: "medicationReference" %}
-{% assign medStatRefs = medStatRefs1 | map: "reference" %}
-{% assign medStatRefsString = medStatRefs | join: ", " | append: "," %}
+{% capture medReqRefsString %}
+  {% for req in medRequests %}
+    {% if req.medicationReference.reference %}
+      {{ req.medicationReference.reference }},
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% assign medReqRefsString = medReqRefsString | strip | strip_newlines %}
 
-{% assign medAdminRefs1 = medAdmin | map: "medicationReference" %}
-{% assign medAdminRefs = medAdminRefs1 | map: "reference" %}
-{% assign medAdminRefsString = medAdminRefs | join: ", " | append: "," %}
+{% capture medStatRefsString %}
+  {% for req in medStatements %}
+    {% if req.medicationReference.reference %}
+      {{ req.medicationReference.reference }},
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% assign medStatRefsString = medStatRefsString | strip | strip_newlines %}
 
-{% assign medDispenseRefs1 = medDispense | map: "medicationReference" %}
-{% assign medDispenseRefs = medDispenseRefs1 | map: "reference" %}
-{% assign medDispenseRefsString = medDispenseRefs | join: ", " | append: "," %}
+{% capture medAdminRefsString %}
+  {% for req in medAdmin %}
+    {% if req.medicationReference.reference %}
+      {{ req.medicationReference.reference }},
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% assign medAdminRefsString = medAdminRefsString | strip | strip_newlines %}
+
+{% capture medDispenseRefsString %}
+  {% for req in medDispense %}
+    {% if req.medicationReference.reference %}
+      {{ req.medicationReference.reference }},
+    {% endif %}
+  {% endfor %}
+{% endcapture %}
+{% assign medDispenseRefsString = medDispenseRefsString | strip | strip_newlines %}
 
 "messageID": "{{ patient.id }}",
 "patient": {
@@ -53,7 +74,7 @@
   {% endif %}
 
   {% if reports.size > 0 %}
-	{% include '_diagnosticReport' reports: reports -%}
+	{% include '_diagnosticreport' reports: reports -%}
   {% endif %}
 
   {% if medRequests.size > 0 or medStatements.size > 0 or medications.size >0 or medAdmin.size >0 or medDispense.size >0 %}
