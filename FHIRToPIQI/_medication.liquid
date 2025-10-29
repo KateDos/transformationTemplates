@@ -40,7 +40,7 @@
 	  {% endif %}
     },
 
-    "startDate": "{% if med.authoredOn %}{{ med.authoredOn }}{% elsif med.effectivePeriod.start %}{{ med.effectivePeriod.start }}{% endif %}",
+    "startDate": "{% if med.dispenseRequest.validityPeriod.start %}{{ med.dispenseRequest.validityPeriod.start }}{% elsif med.effectivePeriod.start %}{{ med.effectivePeriod.start }}{% elsif med.authoredOn %}{{ med.authoredOn }}{% endif %}",
     "endDate": "{% if med.dispenseRequest.validityPeriod.end %}{{ med.dispenseRequest.validityPeriod.end }}{% elsif med.effectivePeriod.end %}{{ med.effectivePeriod.end }}{% endif %}",
     {% if med.dosageInstruction.size >0 %}
 	  {% include '_medInstruction' dosage: med.dosageInstruction[0] -%}

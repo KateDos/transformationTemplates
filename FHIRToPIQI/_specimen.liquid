@@ -30,9 +30,14 @@
 			"specimenStatus": "{{ specimen.status }}",
 		  {% endif %}
 
+		  {% if specimen.collected %}
+			"specimenCollectionDateTime": "{{ specimen.collected.collectedDateTime }}",
+		  {% endif %}
+
 		  {% if specimen.receivedTime %}
 			"specimenReceivedTime": "{{ specimen.receivedTime }}",
 		  {% endif %}
+
 
 		  {% if specimen.condition %}
 			"specimenCondition": {

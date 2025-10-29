@@ -27,6 +27,7 @@
 		"text": "{{ component.code.text }}"
 	  },
 	  "interpretation": "{{ entry.interpretation[0].text }}",
+	  "reportedDateTime": "{{ entry.issued }}",
 	  "performedDateTime": "{{ entry.effectiveDateTime }}",
 	  "performingSite": "{{ entry.performer[0].display }}",
 	  "resultStatus": "{{ entry.status }}",
@@ -66,6 +67,7 @@
   ],
   "text": "{{ entry.code.text | default: entry.code.coding[0].display }}"
 },
+"issuedDateTime": "{{ entry.issued }}",
 "performedDateTime": "{{ entry.effectiveDateTime }}",
 "performingSite": "{{ entry.performer[0].display }}",
 "referenceRange": "{{ entry.referenceRange[0].text }}",

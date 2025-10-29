@@ -15,6 +15,7 @@
         "text": "{{ component.code.text }}"
       },
 	  "interpretation": "{{ observation.interpretation[0].text }}",
+      "issuedDateTime": "{{ observation.issued }}",
       "performedDateTime": "{{ observation.effectiveDateTime }}",
 	  "performingSite": "{{ observation.performer[0].display }}",
       "resultStatus": "{{ observation.status }}",
